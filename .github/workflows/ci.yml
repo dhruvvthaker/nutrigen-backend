@@ -28,3 +28,6 @@ jobs:
                    
             - name: run test-cases
               run: pytest -v
+
+            - name: build docker image
+              run: docker build -t nutrigen .
