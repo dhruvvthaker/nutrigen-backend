@@ -1,0 +1,29 @@
+name: Build and Push to GCP Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      - name: Build and Push Docker image
+        run: |
+          IMAGE_NAME=asia-south1-docker.pkg.dev/pro-creek-463405-m0/nutrigen-docker/nutrigen:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
